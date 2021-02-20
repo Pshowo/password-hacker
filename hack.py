@@ -3,7 +3,11 @@ import socket
 import itertools
 import string
 
-"""Args: Host, port"""
+"""
+Args: Host, port
+Password list: https://www.troyhunt.com/the-773-million-record-collection-1-data-reach/
+
+"""
 
 socket_1 = socket.socket()
 # address = (sys.argv[1], int(sys.argv[2]))
