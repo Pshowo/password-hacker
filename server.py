@@ -1,8 +1,12 @@
 import socket
+import json
 
 HOST = "192.168.0.102"
 PORT = 9090
-SERVER_PASSWORD = "adm"
+SERVER_LOGIN = "username1"
+SERVER_PASSWORD = "1234"
+resp1 = {"result": "Wrong password!"}
+resp2 = {"result": "Wrong login!"}
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
@@ -16,9 +20,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             if not data:
                 break
             else:
-                if data.decode() == SERVER_PASSWORD:
-                    conn.sendall("Connection success!".encode())
+                resp = json.loads(data.decode())
+                print("Data:", resp)
+                if resp['login'] == SERVER_LOGIN:
+                    print("Login OK.")
+                    conn.sendall(json.dumps(resp1).encode())
                 else:
-                    conn.sendall(data)
+                    print("Wrong login")
+                    conn.sendall(json.dumps(resp2).encode())
 
 # python server.py

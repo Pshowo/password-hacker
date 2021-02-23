@@ -2,6 +2,7 @@ import sys
 import socket
 import itertools
 import string
+import json
 
 """
 Args: Host, port
@@ -20,7 +21,26 @@ socket_1.connect(address)
 with open("passwords.txt", 'r') as f:
     pass_list = f.read().splitlines()
 
+with open('logins.txt', "r") as f:
+    login_list = f.read().splitlines()
 
+
+for login in login_list:
+    w_password = ''
+
+    login_json = {
+    "login": login,
+    "password": w_password }
+
+    to_send = json.dumps(login_json)
+    socket_1.send(to_send.encode('utf8'))
+    response = socket_1.recv(1024).decode()
+    response = json.loads(response)
+    if response['result'] == 'Login OK.':
+        break
+
+# input("Press:")
+"""
 while True:
     # password list first
     for _ in pass_list:
@@ -54,6 +74,6 @@ while True:
                     break
         
     break
-
+"""
 
 socket_1.close()
