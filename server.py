@@ -1,6 +1,7 @@
 import socket
 import json
 from icecream import ic
+from time import sleep
 
 HOST = "192.168.0.102"
 PORT = 9090
@@ -42,6 +43,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     elif SERVER_PASSWORD.startswith(resp['password']):
                         print("Login correct and check letter:")
                         ic(resp['password'])
+                        sleep(0.1)
                         conn.sendall(json.dumps({"result": "Exception happened during login"}).encode())
                     else:
                         print("Wrong password!")
